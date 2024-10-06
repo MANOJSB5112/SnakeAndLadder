@@ -1,3 +1,4 @@
+
 package com.example.snakeandladder;
 
 import com.example.snakeandladder.controller.BoardController;
@@ -21,48 +22,65 @@ import java.util.Scanner;
 @SpringBootApplication
 public class SnakeAndLadderApplication implements CommandLineRunner {
 
-	public static void main(String[] args) {
-		SpringApplication.run(SnakeAndLadderApplication.class, args);
-
-	}
-
 	@Override
 	public void run(String... args) throws Exception {
-		Board board=new Board();
-		BoardController boardController=new BoardController(board);
-		Dice dice=new Dice(1,6);
-		DiceController diceController=new DiceController(dice);
-		List<Player> players=new ArrayList<>();
-		players.add(new Player(1,"Chethan",1));
-		players.add(new Player(2,"Manoj",1));
-		players.add(new Player(3,"Rakshith",1));
-		PlayerController playerController=new PlayerController(players);
+		Board board = new Board();
+		BoardController boardController = new BoardController(board);
+		Dice dice = new Dice(1, 6);
+		DiceController diceController = new DiceController(dice);
+		List<Player> players = new ArrayList<>();
+		players.add(new Player(1, "Chethan", 1));
+		players.add(new Player(2, "Manoj", 1));
+		players.add(new Player(3, "Rakshith", 1));
+		PlayerController playerController = new PlayerController(players);
 
-		GameController gameController=new GameController(boardController,diceController,playerController);
+		GameController gameController = new GameController(boardController, diceController, playerController);
+		startGame(gameController);
+	}
 
-		Scanner sc=new Scanner(System.in);
+	public void startGame(GameController gameController) {
+		boolean gotWinner = false;
+		Scanner sc = new Scanner(System.in);
 
-		int currentPlayerIndex;
-		boolean gotWinner=false;
+		int currentPlayerIndex = -1;
 
-		log.info("Welcome, Lets Start the game");
-		log.info("Who gonna start first? ");
-		log.info("Enter 1 for Chethan | Enter 2 for Manoj | Enter 3 for Rakhith");
+		log.info("Welcome, Let's Start the game");
+		log.info("Who is going to start first?");
+		log.info("Enter 1 for Chethan | Enter 2 for Manoj | Enter 3 for Rakshith");
 
-		currentPlayerIndex=sc.nextInt();
-
-		gameController.start(currentPlayerIndex);
-
-		while(gotWinner)
-		{
-			Player currentPlayer= gameController.getCurrentPlayer();
-
-			gameController.takeTurn(currentPlayer);
-
-			if (gameController.checkWinner(currentPlayer)) {
-				gotWinner=true;
-				System.out.println(currentPlayer.getName() + " wins!");
+		while (currentPlayerIndex < 1 || currentPlayerIndex > 3) {
+			log.info("Please enter a valid number (1, 2, or 3):");
+			if (sc.hasNextInt()) {
+				currentPlayerIndex = sc.nextInt();
+			} else {
+				sc.next();
 			}
 		}
+		gameController.start(currentPlayerIndex-1);
+		Player currentPlayer = gameController.getStartingPlayer();
+		while (!gotWinner) {  // This ensures the loop runs until a winner is found
+			log.info("It's " + currentPlayer.getName() + "'s turn! Please enter 'roll' to make a move");
+			String command = sc.next();
+
+			if ("roll".equalsIgnoreCase(command)) {
+				gameController.takeTurn(currentPlayer);
+			} else {
+				log.error("Incorrect Command! Please enter 'roll' to make a move");
+				continue;
+			}
+
+			if (gameController.checkWinner(currentPlayer)) {
+				gotWinner = true;
+				log.info(currentPlayer.getName() + " wins! the Game");
+			}
+			currentPlayer=gameController.getCurrentPlayer();
+		}
+
+		sc.close(); // Close the scanner
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(SnakeAndLadderApplication.class, args);
 	}
 }
+

@@ -1,7 +1,9 @@
 package com.example.snakeandladder.controller;
 
 import com.example.snakeandladder.model.Dice;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DiceController {
     Dice dice;
 
@@ -12,6 +14,9 @@ public class DiceController {
 
     int roll()
     {
-        return dice.getMinValue() + (int) (Math.random() * (dice.getMaxValue() - dice.getMinValue() + 1));
+        int diceValue= dice.getMinValue() + (int) (Math.random() * (dice.getMaxValue() - dice.getMinValue() + 1));
+        log.info("Dice value is {} ",diceValue);
+        return diceValue;
+
     }
 }

@@ -26,8 +26,13 @@ public class GameController {
     }
     public Player getCurrentPlayer()
     {
-        int playerIndex = (currentPlayerIndex + 1) % playerController.numberOfPlayer();
-        Player currentPlayer = playerController.getPlayer(playerIndex);
+        currentPlayerIndex = (currentPlayerIndex + 1) % playerController.numberOfPlayer();
+        Player currentPlayer = playerController.getPlayer(currentPlayerIndex);
+        return currentPlayer;
+    }
+    public Player getStartingPlayer()
+    {
+        Player currentPlayer = playerController.getPlayer(currentPlayerIndex);
         return currentPlayer;
     }
     public void takeTurn(Player player) {
